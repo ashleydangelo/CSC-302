@@ -1,0 +1,154 @@
+import pandas as pd import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+data = {
+    'Country': ['Brazil', 'China', 'France', 'Germany', 'India', 'Italy', 'Japan', 'Russia', 'South Korea', 'Spain', 'UK', 'USA'],
+    '2005_Sales': [1439822.0, 3971101.0, 2118042.0, 3319259.0, np.nan, 2244108.0, 4748482.0, 1520225.0, np.nan, 1528877.0, 2439717.0, 7659983.0],
+    '2022_Sales': [1576666.0, 23563287.0, 1532035.0, 2651357.0, 3792356.0, 1316919.0, 3448297.0, np.nan, 1420486.0, np.nan, 1614063.0, 2858575.0]
+}
+df = pd.DataFrame(data)
+df_clean = df.dropna()
+df_clean['Percentage_Change'] = ((df_clean['2022_Sales'] - df_clean['2005_Sales']) / df_clean['2005_Sales']) * 100
+fig, ax1 = plt.subplots(figsize=(14, 8))
+bar_width = 0.35
+countries = df_clean['Country']
+bar1 = ax1.bar(countries, df_clean['2005_Sales'], bar_width, label='2005 Sales', color='blue')
+bar2 = ax1.bar(countries, df_clean['2022_Sales'], bar_width, label='2022 Sales', color='green', alpha=0.7, bottom=df_clean['2005_Sales'])
+ax1.set_xlabel('Country')
+ax1.set_ylabel('Sales')
+ax1.set_title('Sales Comparison and Percentage Change between 2005 and 2022 by Country')
+ax2 = ax1.twinx()
+line = ax2.plot(countries, df_clean['Percentage_Change'], color='red', label='Percentage Change', marker='o')
+ax2.set_ylabel('Percentage Change (%)')
+bars = [bar1, bar2]
+lines = [line[0]]
+ax1.legend(bars + lines, [bar.get_label() for bar in bars] + [line.get_label() for line in lines], loc='upper left')
+ax1.grid(True, axis='y')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+
+import matplotlib.pyplot as plt
+labels = ['China', 'Rest of the world', 'India', 'Germany', 'Japan', 'USA']
+sizes = [41.8, 35.6, 6.7, 4.7, 6.1, 5.1]
+colors_set2 = plt.get_cmap('Set2').colors
+explode = (0.1, 0, 0, 0, 0, 0)  # Exploding the 'China' segment
+plt.figure(figsize=(10, 7))
+plt.pie(sizes, explode=explode, labels=labels, colors=colors_set2, autopct='%1.1f%%',
+        shadow=True, startangle=140, textprops={'fontsize': 12})
+plt.title('Market Share of Car Sales in 2022', fontsize=16)
+plt.axis('equal')
+plt.tight_layout()
+plt.show()
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+years = np.arange(2013, 2023)
+china_sales = [1.6e7, 1.8e7, 2.1e7, 2.3e7, 2.4e7, 2.5e7, 2.4e7, 2.3e7, 2.2e7, 2.4e7]
+usa_sales = [0.7e7, 0.6e7, 0.6e7, 0.55e7, 0.5e7, 0.48e7, 0.45e7, 0.42e7, 0.4e7, 0.38e7]
+plt.figure(figsize=(14, 8))
+plt.plot(years, china_sales, color='blue', marker='o', linestyle='-', label='China')
+plt.plot(years, usa_sales, color='red', marker='o', linestyle='-', label='USA')
+plt.annotate('Peak sales in 2018', xy=(2018, 2.5e7), xytext=(2015, 2.7e7),
+             arrowprops=dict(facecolor='black', shrink=0.05), fontsize=12)
+plt.annotate('Steady decline', xy=(2022, 0.38e7), xytext=(2017, 1.0e7),
+             arrowprops=dict(facecolor='black', shrink=0.05), fontsize=12)
+plt.fill_between(years, china_sales, usa_sales, where=(np.array(china_sales) >= np.array(usa_sales)),
+                 interpolate=True, color='lightblue', alpha=0.3, label='China vs USA sales gap')
+plt.title('Car Sales in China and USA (2013-2022)', fontsize=16)
+plt.xlabel('Year', fontsize=14)
+plt.ylabel('Total Number of Sold Cars', fontsize=14)
+plt.grid(True)
+plt.xticks(years)
+plt.yticks(np.linspace(0, 3e7, 7))
+plt.legend(loc='upper left', fontsize=12)
+plt.tight_layout()
+plt.show()
+
+
+
+
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+years = np.arange(2013, 2023).reshape(-1, 1)
+china_sales = np.array([1.6e7, 1.8e7, 2.1e7, 2.3e7, 2.4e7, 2.5e7, 2.4e7, 2.3e7, 2.2e7, 2.4e7])
+usa_sales = np.array([0.7e7, 0.6e7, 0.6e7, 0.55e7, 0.5e7, 0.48e7, 0.45e7, 0.42e7, 0.4e7, 0.38e7])
+model_china = LinearRegression().fit(years, china_sales)
+model_usa = LinearRegression().fit(years, usa_sales)
+future_years = np.arange(2023, 2028).reshape(-1, 1)
+china_sales_pred = model_china.predict(future_years)
+usa_sales_pred = model_usa.predict(future_years)
+plt.figure(figsize=(14, 8))
+plt.plot(years, china_sales, color='blue', marker='o', linestyle='-', label='China Historical')
+plt.plot(years, usa_sales, color='red', marker='o', linestyle='-', label='USA Historical')
+plt.plot(future_years, china_sales_pred, color='blue', marker='o', linestyle='--', label='China Projected')
+plt.plot(future_years, usa_sales_pred, color='red', marker='o', linestyle='--', label='USA Projected')
+plt.title('Car Sales Projection in China and USA (2013-2027)', fontsize=16)
+plt.xlabel('Year', fontsize=14)
+plt.ylabel('Total Number of Sold Cars', fontsize=14)
+plt.grid(True)
+plt.xticks(np.arange(2013, 2028, 1))
+plt.yticks(np.linspace(0, 3e7, 7))
+plt.legend(loc='upper left', fontsize=12)
+plt.tight_layout()
+plt.show()
+
+
+import matplotlib.pyplot as plt
+labels = ['China', 'Rest of the world', 'India', 'Germany', 'Japan', 'USA']
+sizes = [41.8, 35.6, 6.7, 4.7, 6.1, 5.1]
+colors_set2 = plt.get_cmap('Set2').colors
+explode = (0.1, 0, 0, 0, 0, 0)  # Exploding the 'China' segment
+plt.figure(figsize=(10, 7))
+patches, texts, autotexts = plt.pie(
+    sizes,
+    explode=explode,
+    labels=labels,
+    colors=colors_set2,
+    autopct='%1.1f%%',
+    shadow=True,
+    startangle=140,
+    textprops={'fontsize': 12},
+    labeldistance=1.1
+)
+    text.set_position((text.get_position()[0], text.get_position()[1] - 0.15))
+    text.set_horizontalalignment('center')
+for autotext in autotexts:
+    autotext.set_position((autotext.get_position()[0] * 1.15, autotext.get_position()[1] * 1.15))
+    autotext.set_bbox(dict(facecolor='white', edgecolor='none', pad=1.5))
+plt.title('Market Share of Car Sales in 2022', fontsize=16)
+plt.axis('equal')
+plt.tight_layout()
+plt.show()
+
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+countries = ["Italy", "France", "Brazil", "UK", "Germany", "USA", "Japan", "China"]
+sales_2005 = [1316919, 1532035, 1439822, 2439717, 3319259, 7659983, 4748482, 3971101]
+sales_2022 = [2244108, 2118042, 1576666, 1614063, 2651357, 2858575, 3448297, 23563287]
+bar_width = 0.35
+index = np.arange(len(countries))
+plt.figure(figsize=(14, 8))
+plt.bar(index, sales_2005, bar_width, color="blue", label="2005 Sales")
+plt.bar(index + bar_width, sales_2022, bar_width, color="red", label="2022 Sales")
+for i in range(len(countries)):
+    plt.text(i, sales_2005[i] + 0.5e5, f'{sales_2005[i]:,}', ha='center', va='bottom', fontsize=10, color="white")
+    plt.text(i + bar_width, sales_2022[i] + 0.5e5, f'{sales_2022[i]:,}', ha='center', va='bottom', fontsize=10, color="white")
+midpoints = index + bar_width / 2
+plt.plot(midpoints, sales_2005, color='gray', linestyle='--', marker='o', label='Trendline 2005', linewidth=2)
+plt.plot(midpoints, sales_2022, color='black', linestyle='--', marker='o', label='Trendline 2022', linewidth=2)
+plt.title('Comparison of Car Sales in 2005 and 2022 by Country with Trendlines', fontsize=16)
+plt.xlabel('Country', fontsize=14)
+plt.ylabel('Number of Cars Sold', fontsize=14)
+plt.xticks(index + bar_width / 2, countries, rotation=45)
+plt.legend()
+plt.tight_layout()
+plt.show()
